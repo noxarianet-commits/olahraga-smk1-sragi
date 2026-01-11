@@ -7,6 +7,7 @@ import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import { Check, X, Search, Filter, Calendar, User, UserCheck, Trash2 } from 'lucide-react';
 import { cn } from '../utils/cn';
+import { getProperImageUrl } from '../utils/imageUrl';
 
 const VerificationList = () => {
     const [searchParams] = useSearchParams();
@@ -199,7 +200,7 @@ const VerificationList = () => {
                                 <div className="md:w-1/3 flex-shrink-0">
                                     <div className="rounded-lg overflow-hidden bg-slate-100 h-64 md:h-full relative group cursor-pointer" onClick={() => window.open(activity.image_url, '_blank')}>
                                         <img
-                                            src={activity.image_url}
+                                            src={getProperImageUrl(activity.image_url)}
                                             alt="Proof"
                                             className="w-full h-full object-cover"
                                             onError={(e) => { e.target.src = 'https://placehold.co/600x400?text=No+Image'; }}

@@ -6,6 +6,7 @@ import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
 import Button from '../components/ui/Button';
 import { Plus, Filter, Calendar, MessageCircle, Trash2 } from 'lucide-react';
+import { getProperImageUrl } from '../utils/imageUrl';
 
 const ActivityList = () => {
     const { user } = useAuth();
@@ -106,9 +107,10 @@ const ActivityList = () => {
                                 )}
                                 <div className="relative aspect-video rounded-xl bg-slate-100 overflow-hidden mb-4">
                                     <img
-                                        src={activity.image_url}
+                                        src={getProperImageUrl(activity.image_url)}
                                         alt={activity.activity_type}
                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                        onError={(e) => { e.target.src = 'https://placehold.co/600x400?text=No+Image'; }}
                                     />
                                     <div className="absolute top-2 right-2">
                                         <Badge variant={getStatusColor(activity.status)} className="shadow-sm">
