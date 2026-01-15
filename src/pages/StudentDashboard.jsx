@@ -5,6 +5,7 @@ import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
 import Button from '../components/ui/Button';
 import { Activity, TrendingUp, Clock, CheckCircle, Plus, Trash2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 // eslint-disable-next-line react/prop-types, no-unused-vars
 const StatCard = ({ title, value, icon: Icon, color, trend }) => (
@@ -30,23 +31,24 @@ const StatCard = ({ title, value, icon: Icon, color, trend }) => (
 
 const StudentDashboard = () => {
     const { user } = useAuth();
+    const navigate = useNavigate();
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [hiddenActivities, setHiddenActivities] = useState([]);
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-    useEffect(() => {
-        if (user?._id) {
-            const storedHidden = JSON.parse(localStorage.getItem(`hiddenActivities_${user._id}`)) || [];
-            setHiddenActivities(storedHidden);
+    const handleDelete = async (activityId) => {
+        if (!confirm('Are you sure you want to delete this pending activity?')) return;
+
+        try {
+            await api.delete(`/activities/${activityId}`);
+            alert('Activity deleted successfully.');
+            setRefreshTrigger(prev => prev + 1);
+        } catch (error) {
+            console.error('Failed to delete activity', error);
+            // If error 403 or specific message about only pending can be deleted, show it
+            const msg = error.response?.data?.message || 'Failed to delete. You can only delete pending activities.';
+            alert(msg);
         }
-    }, [user]);
-
-    const handleDelete = (activityId) => {
-        if (!confirm('Are you sure you want to delete this activity? This will hide it from your view.')) return;
-
-        const newHidden = [...hiddenActivities, activityId];
-        setHiddenActivities(newHidden);
-        localStorage.setItem(`hiddenActivities_${user._id}`, JSON.stringify(newHidden));
     };
 
     useEffect(() => {
@@ -62,7 +64,7 @@ const StudentDashboard = () => {
         };
 
         fetchData();
-    }, []);
+    }, [refreshTrigger]);
 
     if (loading) return <div>Loading dashboard...</div>;
 
@@ -76,7 +78,7 @@ const StudentDashboard = () => {
                     <h1 className="text-2xl font-bold text-slate-900">Hello, {user?.name?.split(' ')[0]}! 👋</h1>
                     <p className="text-slate-500">Here's your activity overview for this week.</p>
                 </div>
-                <Button size="lg" className="shadow-lg shadow-primary-500/20">
+                <Button size="lg" className="shadow-lg shadow-primary-500/20" onClick={() => navigate('/activities/new')}>
                     <Plus className="mr-2" size={20} />
                     Log Activity
                 </Button>
@@ -116,21 +118,22 @@ const StudentDashboard = () => {
                 <div className="lg:col-span-2 space-y-6">
                     <div className="flex items-center justify-between">
                         <h2 className="text-lg font-bold text-slate-900">Recent Activities</h2>
-                        <Button variant="ghost" size="sm">View All</Button>
+                        <Button variant="ghost" size="sm" onClick={() => navigate('/activities')}>View All</Button>
                     </div>
 
                     <div className="space-y-4">
                         {data?.todayActivities
-                            ?.filter(activity => !hiddenActivities.includes(activity._id || activity.id)) // Ensure ID exists in dashboard response
-                            .map((activity, index) => (
-                                <Card key={index} className="relative flex flex-col sm:flex-row items-start sm:items-center gap-4 hover:border-primary-100 transition-colors group pr-12">
-                                    <button
-                                        onClick={(e) => { e.preventDefault(); handleDelete(activity._id || activity.id); }}
-                                        className="absolute top-2 right-2 p-1.5 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                                        title="Delete Activity"
-                                    >
-                                        <Trash2 size={16} />
-                                    </button>
+                            ?.map((activity, index) => (
+                                <Card key={activity._id || index} className="relative flex flex-col sm:flex-row items-start sm:items-center gap-4 hover:border-primary-100 transition-colors group pr-12">
+                                    {activity.status === 'pending' && (
+                                        <button
+                                            onClick={(e) => { e.preventDefault(); handleDelete(activity._id); }}
+                                            className="absolute top-2 right-2 p-1.5 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                            title="Delete Pending Activity"
+                                        >
+                                            <Trash2 size={16} />
+                                        </button>
+                                    )}
                                     <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center flex-shrink-0">
                                         <Activity className="text-slate-500" size={20} />
                                     </div>
@@ -154,7 +157,7 @@ const StudentDashboard = () => {
                 <div className="space-y-6">
                     <div className="flex items-center justify-between">
                         <h2 className="text-lg font-bold text-slate-900">Announcements</h2>
-                        <Button variant="ghost" size="sm">View All</Button>
+                        <Button variant="ghost" size="sm" onClick={() => navigate('/announcements')}>View All</Button>
                     </div>
 
                     <div className="space-y-4">
@@ -168,11 +171,17 @@ const StudentDashboard = () => {
                                 <p className="text-primary-100 text-sm line-clamp-2 mb-4">
                                     {announcement.content}
                                 </p>
-                                <button className="text-sm font-medium hover:text-white transition-colors flex items-center gap-1">
+                                <button
+                                    onClick={() => navigate('/announcements')}
+                                    className="text-sm font-medium hover:text-white transition-colors flex items-center gap-1"
+                                >
                                     Read more &rarr;
                                 </button>
                             </Card>
                         ))}
+                        {(!data?.recentAnnouncements || data.recentAnnouncements.length === 0) && (
+                            <p className="text-slate-500 text-sm">No recent announcements.</p>
+                        )}
                     </div>
                 </div>
             </div>

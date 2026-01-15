@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
 import Button from '../components/ui/Button';
-import { Users, ClipboardList, CheckCircle, Clock, BookOpen, ChevronRight, Trash2, Download } from 'lucide-react';
+import { Users, ClipboardList, CheckCircle, Clock, BookOpen, ChevronRight, Trash2, Download, Eye, Activity } from 'lucide-react';
 import { cn } from '../utils/cn';
 import { downloadFile } from '../utils/downloadHelper';
 
@@ -186,8 +186,8 @@ const TeacherDashboard = () => {
 
                     <div className="space-y-3">
                         {classes.map((cls) => (
-                            <Card key={cls._id} className="group hover:border-primary-200 cursor-pointer transition-all">
-                                <div className="flex items-center justify-between">
+                            <Card key={cls._id} className="group hover:border-primary-200 transition-all p-4">
+                                <div className="flex items-center justify-between mb-4">
                                     <div className="flex items-center gap-3">
                                         <div className="w-10 h-10 rounded-lg bg-primary-50 text-primary-600 flex items-center justify-center">
                                             <BookOpen size={20} />
@@ -197,16 +197,34 @@ const TeacherDashboard = () => {
                                             <p className="text-sm text-slate-500">{cls.student_count} Students</p>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-2">
+                                </div>
+                                <div className="flex items-center justify-between pt-2 border-t border-slate-50 gap-2">
+                                    <div className="flex gap-1">
                                         <button
-                                            onClick={(e) => handleExportClass(cls._id, e)}
-                                            className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-full transition-colors"
-                                            title="Download Report"
+                                            onClick={() => navigate(`/activities?class_id=${cls._id}`)}
+                                            className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors flex items-center gap-2 text-xs font-medium"
+                                            title="View Activities"
                                         >
-                                            <Download size={20} />
+                                            <Activity size={16} />
+                                            Activities
                                         </button>
-                                        <ChevronRight className="text-slate-300 group-hover:text-primary-500 transition-colors" size={20} />
+                                        <button
+                                            onClick={() => navigate(`/admin/users?class_id=${cls._id}`)}
+                                            className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors flex items-center gap-2 text-xs font-medium"
+                                            title="View Students"
+                                        >
+                                            <Users size={16} />
+                                            Students
+                                        </button>
                                     </div>
+                                    <button
+                                        onClick={(e) => handleExportClass(cls._id, e)}
+                                        className="p-2 text-slate-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors flex items-center gap-2 text-xs font-medium"
+                                        title="Download Report"
+                                    >
+                                        <Download size={16} />
+                                        Report
+                                    </button>
                                 </div>
                             </Card>
                         ))}

@@ -57,20 +57,14 @@ const AdminDashboard = () => {
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                // Fetch counts via separate endpoints as explicit dashboard enpoint might not exist
-                // Using parallel requests for performance
-                const [studentsRes, teachersRes, classesRes, activitiesRes] = await Promise.all([
-                    api.get('/users', { params: { role: 'student', limit: 1 } }),
-                    api.get('/users', { params: { role: 'teacher', limit: 1 } }),
-                    api.get('/classes', { params: { limit: 1 } }),
-                    api.get('/activities', { params: { limit: 1 } })
-                ]);
+                const response = await api.get('/dashboard/admin');
+                const data = response.data.data;
 
                 setStats({
-                    students: studentsRes.data.pagination?.totalItems || 0,
-                    teachers: teachersRes.data.pagination?.totalItems || 0,
-                    classes: classesRes.data.pagination?.totalItems || 0,
-                    activities: activitiesRes.data.pagination?.totalItems || 0
+                    students: data.overview.totalStudents,
+                    teachers: data.overview.totalTeachers,
+                    classes: data.overview.totalClasses,
+                    activities: data.overview.totalActivities
                 });
 
             } catch (error) {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
-import { uploadToImgBB } from '../services/imgbb';
+
 import Card from '../components/ui/Card';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
@@ -50,27 +50,26 @@ const SubmitActivity = () => {
         setError('');
 
         try {
-            // 1. Upload to ImgBB
-            console.log('Uploading file to ImgBB...');
-            const { url: imageUrl, id: imageId } = await uploadToImgBB(selectedFile);
-            console.log('File uploaded successfully, URL:', imageUrl, 'ID:', imageId);
+            // Create FormData to send file directly to backend
+            const submitData = new FormData();
+            submitData.append('activity_type', formData.activity_type);
+            submitData.append('count', formData.count);
+            submitData.append('image', selectedFile);
 
-            // 2. Submit to Backend
-            const payload = {
-                ...formData,
-                count: Number(formData.count),
-                image_url: imageUrl,
-                image_proof_id: imageId
-            };
+            console.log('Sending activity data to backend (FormData)');
 
-            console.log('Sending activity data to backend:', payload);
-            await api.post('/activities', payload);
+            // Backend handles upload to Cloudinary now
+            await api.post('/activities', submitData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
 
             console.log('Activity submitted successfully!');
             navigate('/activities');
         } catch (err) {
             console.error('Failed to submit activity', err);
-            setError(err.message || 'Failed to submit activity. Please try again.');
+            setError(err.response?.data?.message || err.message || 'Failed to submit activity. Please try again.');
         } finally {
             setIsLoading(false);
         }

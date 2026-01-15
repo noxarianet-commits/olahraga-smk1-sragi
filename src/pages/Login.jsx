@@ -74,7 +74,6 @@ const Login = () => {
                                 className="form-input w-full rounded-xl text-[#111813] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/20 border border-[#dbe6df] dark:border-gray-700 bg-white dark:bg-gray-900 focus:border-primary h-14 pl-12 pr-4 placeholder:text-gray-400 text-base font-normal transition-all"
                                 placeholder="Masukkan NIS atau Email Anda"
                                 type="text"
-                                value={identifier}
                                 onChange={(e) => setIdentifier(e.target.value)}
                             />
                         </div>
@@ -89,7 +88,7 @@ const Login = () => {
                                 className="form-input w-full rounded-xl text-[#111813] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/20 border border-[#dbe6df] dark:border-gray-700 bg-white dark:bg-gray-900 focus:border-primary h-14 pl-12 pr-12 placeholder:text-gray-400 text-base font-normal transition-all"
                                 placeholder="••••••••"
                                 type={showPassword ? "text" : "password"}
-                                value={password}
+
                                 onChange={(e) => setPassword(e.target.value)}
                             />
                             <button

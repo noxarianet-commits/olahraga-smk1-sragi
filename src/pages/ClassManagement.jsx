@@ -4,13 +4,14 @@ import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import Badge from '../components/ui/Badge';
 import Input from '../components/ui/Input';
-import { School, Trash2, Users, Plus, X } from 'lucide-react';
+import { School, Trash2, Users, Plus, X, Edit } from 'lucide-react';
 
 const ClassManagement = () => {
     const [classes, setClasses] = useState([]);
     const [teachers, setTeachers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
+    const [editingClassId, setEditingClassId] = useState(null);
     const [formData, setFormData] = useState({ class_name: '', grade_level: '', school_year: '', teacher_id: '' });
     const [submitting, setSubmitting] = useState(false);
 
@@ -40,19 +41,24 @@ const ClassManagement = () => {
         fetchTeachers();
     }, []);
 
-    const handleCreate = async (e) => {
+    const handleCreateOrUpdate = async (e) => {
         e.preventDefault();
         setSubmitting(true);
         try {
-            await api.post('/classes', formData);
-            alert('Class created successfully!');
-            setShowForm(false);
-            setFormData({ class_name: '', grade_level: '', school_year: '', teacher_id: '' });
+            if (editingClassId) {
+                await api.put(`/classes/${editingClassId}`, formData);
+                alert('Class updated successfully!');
+            } else {
+                await api.post('/classes', formData);
+                alert('Class created successfully!');
+            }
+
+            closeForm();
             fetchClasses();
         } catch (error) {
-            console.error('Failed to create class', error);
+            console.error('Failed to save class', error);
             const errorMessage = error.response?.data?.message || error.response?.data?.error || error.message;
-            alert(`Failed to create class: ${errorMessage}`);
+            alert(`Failed to save class: ${errorMessage}`);
         } finally {
             setSubmitting(false);
         }
@@ -70,6 +76,23 @@ const ClassManagement = () => {
         }
     };
 
+    const closeForm = () => {
+        setShowForm(false);
+        setEditingClassId(null);
+        setFormData({ class_name: '', grade_level: '', school_year: '', teacher_id: '' });
+    };
+
+    const openEdit = (cls) => {
+        setEditingClassId(cls._id);
+        setFormData({
+            class_name: cls.class_name,
+            grade_level: cls.grade_level,
+            school_year: cls.school_year,
+            teacher_id: cls.teacher_id?._id || ''
+        });
+        setShowForm(true);
+    };
+
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
@@ -77,15 +100,15 @@ const ClassManagement = () => {
                     <h1 className="text-2xl font-bold text-slate-900">Class Management</h1>
                     <p className="text-slate-500">Manage school classes and their members.</p>
                 </div>
-                <Button onClick={() => setShowForm(!showForm)}>
+                <Button onClick={() => { closeForm(); setShowForm(!showForm); }}>
                     {showForm ? 'Cancel' : 'Add New Class'}
                 </Button>
             </div>
 
             {showForm && (
                 <Card className="p-6 border-2 border-emerald-100 bg-emerald-50/50">
-                    <h3 className="text-lg font-bold text-slate-900 mb-4">Create New Class</h3>
-                    <form onSubmit={handleCreate} className="space-y-4">
+                    <h3 className="text-lg font-bold text-slate-900 mb-4">{editingClassId ? 'Edit Class' : 'Create New Class'}</h3>
+                    <form onSubmit={handleCreateOrUpdate} className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <Input
                                 label="Class Name"
@@ -128,7 +151,7 @@ const ClassManagement = () => {
                         <div className="flex justify-end pt-2">
                             <Button type="submit" isLoading={submitting}>
                                 <Plus className="mr-2" size={20} />
-                                Create Class
+                                {editingClassId ? 'Update Class' : 'Create Class'}
                             </Button>
                         </div>
                     </form>
@@ -145,13 +168,22 @@ const ClassManagement = () => {
                                 <div className="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center">
                                     <School size={24} />
                                 </div>
-                                <button
-                                    onClick={() => handleDelete(cls._id)}
-                                    className="p-1.5 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors opacity-0 group-hover:opacity-100"
-                                    title="Delete Class"
-                                >
-                                    <Trash2 size={18} />
-                                </button>
+                                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button
+                                        onClick={() => openEdit(cls)}
+                                        className="p-1.5 text-slate-300 hover:text-blue-500 hover:bg-blue-50 rounded-full transition-colors"
+                                        title="Edit Class"
+                                    >
+                                        <Edit size={18} />
+                                    </button>
+                                    <button
+                                        onClick={() => handleDelete(cls._id)}
+                                        className="p-1.5 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                                        title="Delete Class"
+                                    >
+                                        <Trash2 size={18} />
+                                    </button>
+                                </div>
                             </div>
 
                             <h3 className="text-xl font-bold text-slate-900 mb-1">{cls.class_name}</h3>
@@ -165,14 +197,14 @@ const ClassManagement = () => {
 
                             <div className="pt-4 border-t border-slate-100 flex items-center gap-2 text-slate-600 text-sm">
                                 <Users size={16} />
-                                <span>{cls.students_count || 0} Students</span>
+                                <span>{cls.student_count || 0} Students</span>
                             </div>
                         </Card>
                     ))}
 
                     {/* Add New Class Card Trigger */}
                     <button
-                        onClick={() => setShowForm(true)}
+                        onClick={() => { closeForm(); setShowForm(true); }}
                         className="border-2 border-dashed border-slate-200 rounded-2xl p-6 flex flex-col items-center justify-center text-slate-400 hover:border-primary-300 hover:text-primary-600 transition-colors h-full min-h-[160px]"
                     >
                         <div className="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center mb-3 group-hover:bg-primary-50">
