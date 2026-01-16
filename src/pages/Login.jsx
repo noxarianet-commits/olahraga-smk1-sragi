@@ -67,12 +67,12 @@ const Login = () => {
                 <form onSubmit={handleSubmit} className="space-y-4">
                     {/* NIS Field */}
                     <div className="flex flex-col gap-2">
-                        <label className="text-[#111813] dark:text-gray-200 text-sm font-semibold px-1">NIS / Email</label>
+                        <label className="text-[#111813] dark:text-gray-200 text-sm font-semibold px-1">Username</label>
                         <div className="relative group">
                             <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors">person</span>
                             <input
                                 className="form-input w-full rounded-xl text-[#111813] dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary/20 border border-[#dbe6df] dark:border-gray-700 bg-white dark:bg-gray-900 focus:border-primary h-14 pl-12 pr-4 placeholder:text-gray-400 text-base font-normal transition-all"
-                                placeholder="Masukkan NIS atau Email Anda"
+                                placeholder="Masukkan Username Anda"
                                 type="text"
                                 onChange={(e) => setIdentifier(e.target.value)}
                             />
