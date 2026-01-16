@@ -78,14 +78,14 @@ const SubmitActivity = () => {
     return (
         <div className="max-w-2xl mx-auto">
             <div className="mb-8">
-                <h1 className="text-2xl font-bold text-slate-900">Log Activity</h1>
-                <p className="text-slate-500">Submit your daily exercise proof.</p>
+                <h1 className="text-2xl font-bold text-slate-900">Tambah Aktivitas</h1>
+                <p className="text-slate-500">Tambahkan aktivitas Anda.</p>
             </div>
 
             <Card>
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="space-y-3">
-                        <label className="text-sm font-medium text-slate-700 ml-1">Activity Type</label>
+                        <label className="text-sm font-medium text-slate-700 ml-1">Jenis Aktivitas</label>
                         <div className="grid grid-cols-3 gap-3">
                             {['pushup', 'situp', 'backup'].map((type) => (
                                 <button
@@ -105,9 +105,9 @@ const SubmitActivity = () => {
                     </div>
 
                     <Input
-                        label="Repetition Count"
+                        label="Jumlah repetisi"
                         type="number"
-                        placeholder="e.g. 50"
+                        placeholder="contoh : 20 X"
                         value={formData.count}
                         onChange={(e) => setFormData({ ...formData, count: e.target.value })}
                         required
@@ -115,7 +115,7 @@ const SubmitActivity = () => {
                     />
 
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-700 ml-1">Photo Proof</label>
+                        <label className="text-sm font-medium text-slate-700 ml-1">Bukti Foto</label>
 
                         {!previewUrl ? (
                             <label className="border-2 border-dashed border-slate-300 rounded-xl p-8 flex flex-col items-center justify-center text-center hover:bg-slate-50 transition-colors cursor-pointer group">
@@ -128,8 +128,8 @@ const SubmitActivity = () => {
                                 <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                                     <Camera className="text-slate-400 group-hover:text-slate-600" size={24} />
                                 </div>
-                                <p className="font-medium text-slate-900">Click to upload photo</p>
-                                <p className="text-sm text-slate-500 mt-1">or drag and drop here (max 5MB)</p>
+                                <p className="font-medium text-slate-900">Ketuk untuk mengirim foto</p>
+                                <p className="text-sm text-slate-500 mt-1">atau seret foto ke area ini (max 5MB)</p>
                             </label>
                         ) : (
                             <div className="relative rounded-xl overflow-hidden border border-slate-200">
@@ -142,7 +142,7 @@ const SubmitActivity = () => {
                                     <X size={20} />
                                 </button>
                                 <div className="absolute bottom-2 right-2 px-3 py-1 bg-emerald-500/90 backdrop-blur-sm text-white text-xs font-medium rounded-full flex items-center gap-1">
-                                    <Check size={12} /> Ready to upload
+                                    <Check size={12} /> siap untuk upload
                                 </div>
                             </div>
                         )}

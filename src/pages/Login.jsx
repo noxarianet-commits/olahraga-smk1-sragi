@@ -143,14 +143,7 @@ const Login = () => {
                     </p>
                 </div>
 
-                {/* Illustration - Added from template */}
-
             </main>
-
-            {/* Bottom Indicator for iOS */}
-            <div className="h-6 w-full flex justify-center items-center">
-                <div className="w-32 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full"></div>
-            </div>
         </div>
     );
 };

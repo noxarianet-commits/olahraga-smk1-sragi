@@ -86,10 +86,10 @@ const ActivityList = () => {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900">
-                        {isAdminOrTeacher ? 'Activity Logs' : 'My Activities'}
+                        {isAdminOrTeacher ? 'Aktivitas Siswa' : 'Aktivitas Saya'}
                     </h1>
                     <p className="text-slate-500">
-                        {classIdParam ? 'Viewing class activities' : studentIdParam ? 'Viewing student activities' : isAdminOrTeacher ? 'View and manage student activities.' : 'Track and manage your daily exercises.'}
+                        {classIdParam ? 'Melihat aktivitas kelas' : studentIdParam ? 'Melihat aktivitas siswa' : isAdminOrTeacher ? 'Melihat dan mengelola aktivitas siswa.' : 'Melacak dan mengelola aktivitas harian Anda.'}
                     </p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -103,7 +103,7 @@ const ActivityList = () => {
                         <Link to="/activities/new">
                             <Button>
                                 <Plus className="mr-2" size={20} />
-                                Log New Activity
+                                Tambahkan Aktivitas Baru
                             </Button>
                         </Link>
                     )}
