@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
 import Card from '../components/ui/Card';
+import Pagination from '../components/ui/Pagination';
 import Button from '../components/ui/Button';
 import Badge from '../components/ui/Badge';
 import Input from '../components/ui/Input';
@@ -15,11 +16,23 @@ const ClassManagement = () => {
     const [formData, setFormData] = useState({ class_name: '', grade_level: '', school_year: '', teacher_id: '' });
     const [submitting, setSubmitting] = useState(false);
 
+    // Pagination State
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [itemsPerPage] = useState(9); // Grid layout, maybe 9 fits better
+
     const fetchClasses = async () => {
         setLoading(true);
         try {
-            const response = await api.get('/classes');
+            const params = {
+                page: currentPage,
+                limit: itemsPerPage
+            };
+            const response = await api.get('/classes', { params });
             setClasses(response.data.data);
+            if (response.data.pagination) {
+                setTotalPages(response.data.pagination.totalPages);
+            }
         } catch (error) {
             console.error('Failed to fetch classes', error);
         } finally {
@@ -40,6 +53,10 @@ const ClassManagement = () => {
         fetchClasses();
         fetchTeachers();
     }, []);
+
+    useEffect(() => {
+        fetchClasses();
+    }, [currentPage]);
 
     const handleCreateOrUpdate = async (e) => {
         e.preventDefault();
@@ -214,6 +231,12 @@ const ClassManagement = () => {
                     </button>
                 </div>
             )}
+
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+            />
         </div>
     );
 };

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import Card from '../components/ui/Card';
+import Pagination from '../components/ui/Pagination';
 import Button from '../components/ui/Button';
 import { Search, User, ArrowLeft, BookOpen } from 'lucide-react';
 
@@ -13,49 +14,77 @@ const ClassStudentList = () => {
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
 
-    useEffect(() => {
-        const fetchStudents = async () => {
-            try {
-                // Fetch students for this class
-                const response = await api.get('/users', {
-                    params: {
-                        class_id: classId,
-                        role: 'student'
-                    }
-                });
-                setStudents(response.data.data);
+    // Pagination State
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [itemsPerPage] = useState(9);
 
-                // Ideally we'd get the class name from the response or a separate fetch
-                // For now, let's try to infer or fetch class details if possible
-                // If the user API returns populated class info, we can use that from the first student
-                // Or we can fetch the class details separately
+    const fetchStudents = async () => {
+        setLoading(true);
+        try {
+            // Fetch students for this class
+            const params = {
+                class_id: classId,
+                role: 'student',
+                page: currentPage,
+                limit: itemsPerPage
+            };
+            if (searchQuery) params.search = searchQuery;
+
+            const response = await api.get('/users', { params });
+            setStudents(response.data.data);
+            if (response.data.pagination) {
+                setTotalPages(response.data.pagination.totalPages);
+            }
+
+            // Fetch class details if not already set (or we can just fetch it once)
+            // We can optimistically try to get it from the first student if available, 
+            // but fetching it directly is safer if the list is empty.
+            if (!className) {
                 try {
-                    const classRes = await api.get(`/classes/${classId}`); // Assuming this endpoint exists or similar
+                    const classRes = await api.get(`/classes/${classId}`);
                     setClassName(classRes.data.data.class_name);
                 } catch (err) {
-                    // Fallback or ignore if endpoint doesn't exist
-                    console.log("Could not fetch class details directly");
+                    console.error("Could not fetch class details");
+                    // Fallback to first student's class name if available
                     if (response.data.data.length > 0 && response.data.data[0].class_id) {
                         setClassName(response.data.data[0].class_id.class_name);
                     }
                 }
-
-            } catch (error) {
-                console.error('Failed to fetch students', error);
-            } finally {
-                setLoading(false);
             }
-        };
 
+        } catch (error) {
+            console.error('Failed to fetch students', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         if (classId) {
             fetchStudents();
         }
-    }, [classId]);
+    }, [classId, currentPage]);
 
-    const filteredStudents = students.filter(student =>
-        student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (student.nis && student.nis.includes(searchQuery))
-    );
+    // Debounce search
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (classId) {
+                setCurrentPage(1); // Reset to page 1
+                // If we are already at page 1, we need to trigger fetch explicitly 
+                // or add a dependency. 
+                // Since fetchStudents uses currentPage, altering it triggers fetch.
+                // But if it is ALREADY 1, it won't trigger. 
+                // So we should depend on searchQuery in the main effect?
+                // Or call fetchStudents here? calling here is safer for debounce.
+                if (currentPage === 1) fetchStudents();
+            }
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [searchQuery]);
+
+    // Server-side filtered
+    const filteredStudents = students;
 
     return (
         <div className="space-y-6">
@@ -83,7 +112,7 @@ const ClassStudentList = () => {
                     />
                 </div>
                 <div className="text-sm text-slate-500">
-                    Total: <span className="font-semibold text-slate-900">{filteredStudents.length}</span> students
+                    Showing: <span className="font-semibold text-slate-900">{filteredStudents.length}</span> students
                 </div>
             </Card>
 
@@ -110,6 +139,12 @@ const ClassStudentList = () => {
                     )}
                 </div>
             )}
+
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+            />
         </div>
     );
 };

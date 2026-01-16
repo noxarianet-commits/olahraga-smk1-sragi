@@ -366,7 +366,7 @@ Get semua users (Admin/Teacher).
 - `limit` (int): Jumlah per halaman (default: 20)
 - `role` (string): Filter by role (student/teacher/admin)
 - `class_id` (string): Filter by class
-- `search` (string): Cari berdasarkan nama/NIS/email
+- `search` (string): Cari berdasarkan nama/NIS/NIP/email
 
 **Response (200):**
 ```json
@@ -856,6 +856,11 @@ Get aktivitas pending untuk verifikasi (Teacher/Admin).
 
 **Headers:** `Authorization: Bearer <token>`
 
+**Query Parameters:**
+- `page` (int): Halaman (default: 1)
+- `limit` (int): Jumlah per halaman (default: 20)
+- `search` (string): Cari berdasarkan nama siswa, NIS, atau nama kelas
+
 **Response (200):**
 ```json
 {
@@ -882,7 +887,10 @@ Get aktivitas pending untuk verifikasi (Teacher/Admin).
   "pagination": {
     "currentPage": 1,
     "totalPages": 1,
-    "totalItems": 3
+    "totalItems": 3,
+    "itemsPerPage": 20,
+    "hasNextPage": false,
+    "hasPrevPage": false
   }
 }
 ```

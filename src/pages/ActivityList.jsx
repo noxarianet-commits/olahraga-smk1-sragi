@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import Card from '../components/ui/Card';
+import Pagination from '../components/ui/Pagination';
 import Badge from '../components/ui/Badge';
 import Button from '../components/ui/Button';
 import { Plus, Filter, Calendar, MessageCircle, Trash2, User, X } from 'lucide-react';
@@ -15,6 +16,11 @@ const ActivityList = () => {
     const [hiddenActivities, setHiddenActivities] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('all');
+
+    // Pagination State
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [itemsPerPage] = useState(9);
 
     const classIdParam = searchParams.get('class_id');
     const studentIdParam = searchParams.get('student_id');
@@ -31,12 +37,19 @@ const ActivityList = () => {
     const fetchActivities = async () => {
         setLoading(true);
         try {
-            const params = {};
+            const params = {
+                page: currentPage,
+                limit: itemsPerPage
+            };
             if (classIdParam) params.class_id = classIdParam;
             if (studentIdParam) params.student_id = studentIdParam;
+            if (filter !== 'all') params.status = filter;
 
             const response = await api.get('/activities', { params });
             setActivities(response.data.data);
+            if (response.data.pagination) {
+                setTotalPages(response.data.pagination.totalPages);
+            }
         } catch (error) {
             console.error('Failed to fetch activities', error);
         } finally {
@@ -46,7 +59,12 @@ const ActivityList = () => {
 
     useEffect(() => {
         fetchActivities();
-    }, [classIdParam, studentIdParam]); // Re-fetch when URL params change
+    }, [classIdParam, studentIdParam, filter, currentPage]); // Re-fetch on filter/page change
+
+    const handleFilterChange = (newFilter) => {
+        setFilter(newFilter);
+        setCurrentPage(1); // Reset page on filter change
+    };
 
     const handleDelete = async (activityId) => {
         const isStudent = user?.role === 'student';
@@ -115,7 +133,7 @@ const ActivityList = () => {
                 {['All', 'Pending', 'Verified', 'Rejected'].map((status) => (
                     <button
                         key={status}
-                        onClick={() => setFilter(status.toLowerCase())}
+                        onClick={() => handleFilterChange(status.toLowerCase())}
                         className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${filter === status.toLowerCase()
                             ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20'
                             : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'
@@ -202,6 +220,12 @@ const ActivityList = () => {
                         ))}
                 </div>
             )}
+
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+            />
         </div>
     );
 };

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import api from '../services/api';
 import Card from '../components/ui/Card';
+import Pagination from '../components/ui/Pagination';
 import Badge from '../components/ui/Badge';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
@@ -16,6 +17,11 @@ const VerificationList = () => {
     const [refreshTrigger, setRefreshTrigger] = useState(0);
     const [searchQuery, setSearchQuery] = useState('');
     const selectedId = searchParams.get('id');
+
+    // Pagination State
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [itemsPerPage] = useState(10);
 
     const handleHardDelete = async (activity, e) => {
         e.stopPropagation();
@@ -35,8 +41,18 @@ const VerificationList = () => {
         const fetchPending = async () => {
             setLoading(true);
             try {
-                const response = await api.get('/activities/pending');
+                const params = {
+                    page: currentPage,
+                    limit: itemsPerPage
+                };
+                // Assuming backend supports search, if not, this param might be ignored
+                if (searchQuery) params.search = searchQuery;
+
+                const response = await api.get('/activities/pending', { params });
                 setActivities(response.data.data);
+                if (response.data.pagination) {
+                    setTotalPages(response.data.pagination.totalPages);
+                }
             } catch (error) {
                 console.error('Failed to fetch pending activities', error);
             } finally {
@@ -45,10 +61,24 @@ const VerificationList = () => {
         };
 
         fetchPending();
-    }, [refreshTrigger]);
+    }, [refreshTrigger, currentPage]); // Added currentPage dependency
+
+    // Debounce search
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setCurrentPage(1);
+            setRefreshTrigger(prev => prev + 1);
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [searchQuery]);
 
 
 
+    // Server-side filtered activities
+    const filteredActivities = activities;
+
+    /* 
+    // OLD Client side
     const filteredActivities = activities.filter(activity => {
         const studentName = activity.student_id?.name || '';
         const studentNis = activity.student_id?.nis || '';
@@ -59,6 +89,7 @@ const VerificationList = () => {
             studentNis.includes(q) ||
             className.toLowerCase().includes(q);
     });
+    */
 
     // State for modal
     const [reviewModal, setReviewModal] = useState({ show: false, activity: null, action: null });
@@ -285,6 +316,12 @@ const VerificationList = () => {
                     ))}
                 </div>
             )}
+
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+            />
         </div>
     );
 };

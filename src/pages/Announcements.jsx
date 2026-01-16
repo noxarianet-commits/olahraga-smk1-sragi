@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import Card from '../components/ui/Card';
+import Pagination from '../components/ui/Pagination';
 import Badge from '../components/ui/Badge';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
@@ -13,6 +14,11 @@ const Announcements = () => {
     const [announcements, setAnnouncements] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
+
+    // Pagination State
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [itemsPerPage] = useState(5);
 
     // Form State
     const [formData, setFormData] = useState({
@@ -38,8 +44,17 @@ const Announcements = () => {
 
             // Determine endpoint based on role
             const endpoint = isTeacher ? '/announcements' : '/announcements/for-student';
-            const response = await api.get(endpoint);
+
+            const params = {
+                page: currentPage,
+                limit: itemsPerPage
+            };
+
+            const response = await api.get(endpoint, { params });
             setAnnouncements(response.data.data);
+            if (response.data.pagination) {
+                setTotalPages(response.data.pagination.totalPages);
+            }
         } catch (error) {
             console.error('Failed to fetch announcements', error);
             // Fallback for demo if endpoint fails
@@ -66,7 +81,7 @@ const Announcements = () => {
                 fetchClasses();
             }
         }
-    }, [user]);
+    }, [user, currentPage]);
 
     const handleCreate = async (e) => {
         e.preventDefault();
@@ -250,6 +265,12 @@ const Announcements = () => {
                     ))}
                 </div >
             )}
+
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+            />
         </div >
     );
 };

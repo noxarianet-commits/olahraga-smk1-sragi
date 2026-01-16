@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
 import Card from '../components/ui/Card';
+import Pagination from '../components/ui/Pagination';
 import Button from '../components/ui/Button';
 import Badge from '../components/ui/Badge';
 import Input from '../components/ui/Input';
@@ -12,6 +13,11 @@ const UserManagement = () => {
     const [loading, setLoading] = useState(true);
     const [filterRole, setFilterRole] = useState('all');
     const [searchQuery, setSearchQuery] = useState('');
+
+    // Pagination State
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [itemsPerPage] = useState(10);
 
     // Form State
     const [showForm, setShowForm] = useState(false);
@@ -124,10 +130,20 @@ const UserManagement = () => {
     const fetchUsers = async () => {
         setLoading(true);
         try {
-            const params = {};
+            const params = {
+                page: currentPage,
+                limit: itemsPerPage
+            };
             if (filterRole !== 'all') params.role = filterRole;
+            // Note: Search implementation might depend on backend. Assuming backend handles it or we filter client side if not.
+            // API Doc says search is supported: `search` (string)
+            if (searchQuery) params.search = searchQuery;
+
             const response = await api.get('/users', { params });
             setUsers(response.data.data);
+            if (response.data.pagination) {
+                setTotalPages(response.data.pagination.totalPages);
+            }
         } catch (error) {
             console.error('Failed to fetch users', error);
             setUsers([]);
@@ -146,8 +162,22 @@ const UserManagement = () => {
     };
 
     useEffect(() => {
+        setCurrentPage(1); // Reset to page 1 when filter changes
         fetchUsers();
     }, [filterRole]);
+
+    // Debounce search or just fetch on search change
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setCurrentPage(1);
+            fetchUsers();
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [searchQuery]);
+
+    useEffect(() => {
+        fetchUsers();
+    }, [currentPage]);
 
     useEffect(() => {
         if (showForm) {
@@ -167,11 +197,19 @@ const UserManagement = () => {
         }
     };
 
+    // Client-side filtering is removed in favor of Server-side filtering
+    // But if backend doesn't support search yet, we might need to rely on what we get.
+    // However, API doc says search is supported. So we trust fetchUsers logic.
+    const filteredUsers = users;
+
+    /* 
+    // OLD Client side filter (removed)
     const filteredUsers = users.filter(user =>
         user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (user.email && user.email.toLowerCase().includes(searchQuery.toLowerCase())) ||
         (user.nis && user.nis.includes(searchQuery))
     );
+    */
 
     const getRoleIcon = (role) => {
         switch (role) {
@@ -398,6 +436,12 @@ const UserManagement = () => {
                     )}
                 </div>
             )}
+
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+            />
         </div>
     );
 };
