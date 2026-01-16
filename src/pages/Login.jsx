@@ -4,8 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import logoSmk from '../assets/logosmk.png';
 
 const Login = () => {
-    const [identifier, setIdentifier] = useState('20250001'); // Default for demo
-    const [password, setPassword] = useState('siswa123'); // Default for demo
+    const [identifier, setIdentifier] = useState(''); // Default for demo
+    const [password, setPassword] = useState(''); // Default for demo
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
@@ -59,7 +59,7 @@ const Login = () => {
                 <div className="text-center mb-8">
                     <h1 className="text-[#111813] dark:text-white text-3xl font-bold tracking-tight mb-2">Selamat Datang</h1>
                     <p className="text-[#61896f] dark:text-gray-400 text-base font-normal">
-                        Silahkan masuk untuk melihat aktivitas harianmu dan tugas sekolah.
+                        Silahkan masuk untuk melihat aktivitas harianmu.
                     </p>
                 </div>
 
@@ -103,13 +103,6 @@ const Login = () => {
                         </div>
                     </div>
 
-                    {/* Forgot Password - Added from template */}
-                    <div className="flex justify-end pt-1">
-                        <a className="text-primary text-sm font-medium hover:underline" href="#">
-                            Lupa Kata Sandi?
-                        </a>
-                    </div>
-
                     {/* Error Message */}
                     {error && (
                         <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm border border-red-100 flex items-center gap-2">
@@ -128,6 +121,15 @@ const Login = () => {
                             {isLoading ? 'Memproses...' : 'Masuk'}
                             {!isLoading && <span className="material-symbols-outlined">login</span>}
                         </button>
+
+                        <div className="pt-4 border-t border-slate-100 mt-6"> {/* Added mt-6 for spacing */}
+                            <a
+                                href="https://developer-aplikasi-smk.netlify.app/"
+                                className="block w-full text-center py-2.5 px-4 rounded-xl border-2 border-slate-200 text-slate-600 font-semibold hover:border-primary-500 hover:text-primary-600 hover:bg-primary-50 transition-all text-sm"
+                            >
+                                Tentang Pengembang Aplikasi
+                            </a>
+                        </div>
                     </div>
                 </form>
 
@@ -135,7 +137,7 @@ const Login = () => {
                 <div className="mt-auto pt-10 text-center">
                     <p className="text-gray-500 dark:text-gray-400 text-sm font-normal">
                         Belum punya akun?{' '}
-                        <a className="text-primary font-bold" href="#">
+                        <a className="text-primary font-bold" href="https://wa.me/6285936603517">
                             Hubungi Admin Sekolah
                         </a>
                     </p>

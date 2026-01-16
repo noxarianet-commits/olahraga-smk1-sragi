@@ -33,15 +33,15 @@ const TeacherDashboard = () => {
 
     const handleHardDelete = async (activityId, e) => {
         e.stopPropagation();
-        if (!confirm(`PERMANENT DELETE: Are you sure you want to delete this activity? This cannot be undone.`)) return;
+        if (!confirm(`HAPUS PERMANEN: Apakah Anda yakin ingin menghapus aktivitas ini? Tindakan ini tidak dapat dibatalkan.`)) return;
 
         try {
             await api.delete(`/activities/${activityId}`);
-            alert('Activity deleted permanently.');
+            alert('Aktivitas dihapus secara permanen.');
             setRefreshTrigger(prev => prev + 1);
         } catch (error) {
             console.error('Failed to delete activity', error);
-            alert('Failed to delete: Backend might not support delete.');
+            alert('Gagal menghapus: Backend mungkin tidak mendukung penghapusan.');
         }
     };
 
@@ -52,7 +52,7 @@ const TeacherDashboard = () => {
             downloadFile(response, `class-report-${classId}.xlsx`);
         } catch (error) {
             console.error('Failed to export class report', error);
-            alert('Failed to export report.');
+            alert('Gagal mengekspor laporan.');
         }
     };
 
@@ -209,7 +209,7 @@ const TeacherDashboard = () => {
                                             Activities
                                         </button>
                                         <button
-                                            onClick={() => navigate(`/admin/users?class_id=${cls._id}`)}
+                                            onClick={() => navigate(`/dashboard/classes/${cls._id}/students`)}
                                             className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors flex items-center gap-2 text-xs font-medium"
                                             title="View Students"
                                         >

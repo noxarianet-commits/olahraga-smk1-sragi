@@ -5,6 +5,8 @@ import { cn } from '../../utils/cn';
 import { useAuth } from '../../context/AuthContext';
 import ChangePasswordModal from '../features/ChangePasswordModal';
 
+import logoSmk from '../../assets/logosmk.png';
+
 const Sidebar = () => {
     const { user, logout } = useAuth();
     const [showPasswordModal, setShowPasswordModal] = useState(false);
@@ -12,12 +14,12 @@ const Sidebar = () => {
     // Define links based on role (simplified for now)
     const links = [
         { icon: LayoutDashboard, label: 'Dashboard', to: `/dashboard/${user?.role}` },
-        { icon: Activity, label: 'Activities', to: '/activities' },
-        { icon: Bell, label: 'Announcements', to: '/announcements' },
+        { icon: Activity, label: 'Aktivitas', to: '/activities' },
+        { icon: Bell, label: 'Pengumuman', to: '/announcements' },
     ];
 
     if (user?.role === 'teacher') {
-        links.push({ icon: CheckSquare, label: 'Verification', to: '/verification' });
+        links.push({ icon: CheckSquare, label: 'Verifikasi', to: '/verification' });
     }
 
     // Profile link
@@ -29,12 +31,12 @@ const Sidebar = () => {
             <aside className="hidden md:flex flex-col w-64 h-screen bg-white border-r border-slate-200 fixed left-0 top-0 z-20">
                 <div className="p-6 border-b border-slate-100">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-primary-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-primary-500/30">
-                            A
+                        <div className="w-10 h-10 flex items-center justify-center">
+                            <img src={logoSmk} alt="SMK Logo" className="w-full h-full object-contain" />
                         </div>
                         <div>
-                            <h1 className="font-bold text-slate-900 text-lg leading-tight">Activity</h1>
-                            <p className="text-xs text-slate-500 font-medium tracking-wide">TRACKER</p>
+                            <h1 className="font-bold text-slate-900 text-lg leading-tight">Latihan</h1>
+                            <p className="text-xs text-slate-500 font-medium tracking-wide">Kebugaran Jasmani</p>
                         </div>
                     </div>
                 </div>
@@ -82,7 +84,7 @@ const Sidebar = () => {
                         className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-all duration-200"
                     >
                         <Lock size={20} />
-                        <span className="font-medium">Change Password</span>
+                        <span className="font-medium">Ganti Kata Sandi</span>
                     </button>
 
                     <button
@@ -90,7 +92,7 @@ const Sidebar = () => {
                         className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-slate-500 hover:bg-red-50 hover:text-red-600 transition-all duration-200"
                     >
                         <LogOut size={20} />
-                        <span className="font-medium">Sign Out</span>
+                        <span className="font-medium">Keluar</span>
                     </button>
                 </div>
             </aside>
@@ -122,7 +124,7 @@ const Sidebar = () => {
                         className="flex flex-col items-center justify-center p-3 text-slate-400"
                     >
                         <LogOut size={24} />
-                        <span className="text-[10px] font-medium mt-1">Exit</span>
+                        <span className="text-[10px] font-medium mt-1">Keluar</span>
                     </button>
                 </nav>
             </div>

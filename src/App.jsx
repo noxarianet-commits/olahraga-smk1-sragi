@@ -13,6 +13,8 @@ import UserManagement from './pages/UserManagement';
 import ClassManagement from './pages/ClassManagement';
 import SystemLogs from './pages/SystemLogs';
 
+import ClassStudentList from './pages/ClassStudentList';
+
 // Placeholder components for routes not yet implemented
 const Placeholder = ({ title }) => <div className="p-4"><h2 className="text-2xl font-bold">{title}</h2><p className="text-slate-500">Coming Soon...</p></div>;
 
@@ -29,6 +31,7 @@ function App() {
             <Route path="student" element={<StudentDashboard />} />
             <Route path="teacher" element={<TeacherDashboard />} />
             <Route path="admin" element={<AdminDashboard />} />
+            <Route path="classes/:classId/students" element={<ClassStudentList />} />
           </Route>
 
           <Route path="/admin" element={<DashboardLayout />}>

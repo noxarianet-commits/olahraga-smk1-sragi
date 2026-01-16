@@ -37,16 +37,16 @@ const StudentDashboard = () => {
     const [refreshTrigger, setRefreshTrigger] = useState(0);
 
     const handleDelete = async (activityId) => {
-        if (!confirm('Are you sure you want to delete this pending activity?')) return;
+        if (!confirm('Apakah Anda yakin ingin menghapus aktivitas tertunda ini?')) return;
 
         try {
             await api.delete(`/activities/${activityId}`);
-            alert('Activity deleted successfully.');
+            alert('Aktivitas berhasil dihapus.');
             setRefreshTrigger(prev => prev + 1);
         } catch (error) {
             console.error('Failed to delete activity', error);
             // If error 403 or specific message about only pending can be deleted, show it
-            const msg = error.response?.data?.message || 'Failed to delete. You can only delete pending activities.';
+            const msg = error.response?.data?.message || 'Gagal menghapus. Anda hanya dapat menghapus aktivitas yang tertunda.';
             alert(msg);
         }
     };
@@ -75,38 +75,38 @@ const StudentDashboard = () => {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900">Hello, {user?.name?.split(' ')[0]}! 👋</h1>
-                    <p className="text-slate-500">Here's your activity overview for this week.</p>
+                    <h1 className="text-2xl font-bold text-slate-900">Halo, {user?.name?.split(' ')[0]}! 👋</h1>
+                    <p className="text-slate-500">Ini ringkasan aktivitasmu minggu ini.</p>
                 </div>
                 <Button size="lg" className="shadow-lg shadow-primary-500/20" onClick={() => navigate('/activities/new')}>
                     <Plus className="mr-2" size={20} />
-                    Log Activity
+                    Catat Aktivitas
                 </Button>
             </div>
 
             {/* Stats Grid */}
             <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <StatCard
-                    title="Total Activities"
+                    title="Total Aktivitas"
                     value={stats?.totalActivities || 0}
                     icon={Activity}
                     color="bg-primary-500"
-                    trend="+12% from last week"
+                    trend="+12% dari minggu lalu"
                 />
                 <StatCard
-                    title="Verified"
+                    title="Terverifikasi"
                     value={stats?.verifiedCount || 0}
                     icon={CheckCircle}
                     color="bg-emerald-500"
                 />
                 <StatCard
-                    title="Pending"
+                    title="Menunggu"
                     value={stats?.pendingCount || 0}
                     icon={Clock}
                     color="bg-amber-500"
                 />
                 <StatCard
-                    title="Pushups"
+                    title="Total Pushup"
                     value={stats?.totalPushup || 0}
                     icon={TrendingUp}
                     color="bg-violet-500"
@@ -117,8 +117,8 @@ const StudentDashboard = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 space-y-6">
                     <div className="flex items-center justify-between">
-                        <h2 className="text-lg font-bold text-slate-900">Recent Activities</h2>
-                        <Button variant="ghost" size="sm" onClick={() => navigate('/activities')}>View All</Button>
+                        <h2 className="text-lg font-bold text-slate-900">Aktivitas Terbaru</h2>
+                        <Button variant="ghost" size="sm" onClick={() => navigate('/activities')}>Lihat Semua</Button>
                     </div>
 
                     <div className="space-y-4">
@@ -129,7 +129,7 @@ const StudentDashboard = () => {
                                         <button
                                             onClick={(e) => { e.preventDefault(); handleDelete(activity._id); }}
                                             className="absolute top-2 right-2 p-1.5 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                                            title="Delete Pending Activity"
+                                            title="Hapus Aktivitas Pending"
                                         >
                                             <Trash2 size={16} />
                                         </button>
@@ -139,16 +139,16 @@ const StudentDashboard = () => {
                                     </div>
                                     <div className="flex-1">
                                         <h4 className="font-semibold text-slate-900 capitalize">{activity.activity_type}</h4>
-                                        <p className="text-sm text-slate-500">{activity.count} reps • Today</p>
+                                        <p className="text-sm text-slate-500">{activity.count} reps • Hari Ini</p>
                                     </div>
                                     <Badge variant={activity.status === 'verified' ? 'success' : 'warning'}>
-                                        {activity.status}
+                                        {activity.status === 'verified' ? 'Terverifikasi' : activity.status === 'pending' ? 'Menunggu' : 'Ditolak'}
                                     </Badge>
                                 </Card>
                             ))}
 
                         {data?.todayActivities?.length === 0 && (
-                            <p className="text-slate-500 text-center py-8">No activities logged today yet.</p>
+                            <p className="text-slate-500 text-center py-8">Belum ada aktivitas hari ini.</p>
                         )}
                     </div>
                 </div>
@@ -156,16 +156,16 @@ const StudentDashboard = () => {
                 {/* Announcements Preview */}
                 <div className="space-y-6">
                     <div className="flex items-center justify-between">
-                        <h2 className="text-lg font-bold text-slate-900">Announcements</h2>
-                        <Button variant="ghost" size="sm" onClick={() => navigate('/announcements')}>View All</Button>
+                        <h2 className="text-lg font-bold text-slate-900">Pengumuman</h2>
+                        <Button variant="ghost" size="sm" onClick={() => navigate('/announcements')}>Lihat Semua</Button>
                     </div>
 
                     <div className="space-y-4">
                         {data?.recentAnnouncements?.map((announcement) => (
                             <Card key={announcement._id} className="bg-gradient-to-br from-primary-500 to-primary-600 text-white border-none shadow-lg shadow-primary-500/20">
                                 <div className="mb-3 flex items-start justify-between">
-                                    <span className="bg-white/20 px-2 py-1 rounded-lg text-xs font-medium backdrop-blur-sm">New</span>
-                                    <span className="text-xs text-primary-100">Today</span>
+                                    <span className="bg-white/20 px-2 py-1 rounded-lg text-xs font-medium backdrop-blur-sm">Baru</span>
+                                    <span className="text-xs text-primary-100">Hari Ini</span>
                                 </div>
                                 <h3 className="font-bold text-lg mb-2 leading-tight">{announcement.title}</h3>
                                 <p className="text-primary-100 text-sm line-clamp-2 mb-4">
@@ -175,12 +175,12 @@ const StudentDashboard = () => {
                                     onClick={() => navigate('/announcements')}
                                     className="text-sm font-medium hover:text-white transition-colors flex items-center gap-1"
                                 >
-                                    Read more &rarr;
+                                    Baca selengkapnya &rarr;
                                 </button>
                             </Card>
                         ))}
                         {(!data?.recentAnnouncements || data.recentAnnouncements.length === 0) && (
-                            <p className="text-slate-500 text-sm">No recent announcements.</p>
+                            <p className="text-slate-500 text-sm">Tidak ada pengumuman terbaru.</p>
                         )}
                     </div>
                 </div>

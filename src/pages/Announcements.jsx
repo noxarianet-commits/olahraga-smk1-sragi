@@ -110,8 +110,8 @@ const Announcements = () => {
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900">Announcements</h1>
-                    <p className="text-slate-500">Updates, news, and important information.</p>
+                    <h1 className="text-2xl font-bold text-slate-900">Pengumuman</h1>
+                    <p className="text-slate-500">Pengumuman, berita, dan informasi penting.</p>
                 </div>
                 {isTeacher && (
                     <Button onClick={() => setShowForm(!showForm)}>
@@ -195,7 +195,7 @@ const Announcements = () => {
             ) : announcements.length === 0 ? (
                 <Card className="p-12 text-center text-slate-500 bg-slate-50 border-dashed">
                     <Bell className="w-16 h-16 mx-auto mb-4 text-primary-300" />
-                    <h3 className="text-lg font-medium text-slate-900 mb-1">No Announcements</h3>
+                    <h3 className="text-lg font-medium text-slate-900 mb-1">Tidak Ada Pengumuman</h3>
                     <p>Stay tuned! Updates will appear here.</p>
                 </Card>
             ) : (

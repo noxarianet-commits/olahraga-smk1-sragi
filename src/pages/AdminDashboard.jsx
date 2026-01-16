@@ -40,7 +40,7 @@ const AdminDashboard = () => {
             downloadFile(response, 'students-data.xlsx');
         } catch (error) {
             console.error('Failed to export students', error);
-            alert('Failed to export students data.');
+            alert('Gagal mengekspor data siswa.');
         }
     };
 
@@ -50,7 +50,7 @@ const AdminDashboard = () => {
             downloadFile(response, 'activity-logs.xlsx');
         } catch (error) {
             console.error('Failed to export activities', error);
-            alert('Failed to export activity logs.');
+            alert('Gagal mengekspor log aktivitas.');
         }
     };
 
@@ -84,7 +84,7 @@ const AdminDashboard = () => {
             {/* Header */}
             <div>
                 <h1 className="text-2xl font-bold text-slate-900">Admin Dashboard 🛡️</h1>
-                <p className="text-slate-500">System overview and management.</p>
+                <p className="text-slate-500">Management System.</p>
             </div>
 
             {/* Stats Overview */}
@@ -121,7 +121,7 @@ const AdminDashboard = () => {
 
             {/* Quick Actions (Mock) */}
             <div>
-                <h2 className="text-lg font-bold text-slate-900 mb-4">Quick Management</h2>
+                <h2 className="text-lg font-bold text-slate-900 mb-4">Management Cepat</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <Link to="/admin/users">
                         <Card className="hover:border-primary-200 transition-colors cursor-pointer group h-full">
@@ -130,8 +130,8 @@ const AdminDashboard = () => {
                                     <Users size={20} />
                                 </div>
                                 <div>
-                                    <h3 className="font-semibold text-slate-900">Manage Users</h3>
-                                    <p className="text-sm text-slate-500">Add, edit, or remove users</p>
+                                    <h3 className="font-semibold text-slate-900">Management Users</h3>
+                                    <p className="text-sm text-slate-500">Tambahkan, edit, Atau Hapus users</p>
                                 </div>
                             </div>
                         </Card>
@@ -143,8 +143,8 @@ const AdminDashboard = () => {
                                     <School size={20} />
                                 </div>
                                 <div>
-                                    <h3 className="font-semibold text-slate-900">Manage Classes</h3>
-                                    <p className="text-sm text-slate-500">Create classes and assign teachers</p>
+                                    <h3 className="font-semibold text-slate-900">Management Kelas</h3>
+                                    <p className="text-sm text-slate-500">Tambahkan Kelas & Guru</p>
                                 </div>
                             </div>
                         </Card>
@@ -156,8 +156,8 @@ const AdminDashboard = () => {
                                     <Shield size={20} />
                                 </div>
                                 <div>
-                                    <h3 className="font-semibold text-slate-900">System Logs</h3>
-                                    <p className="text-sm text-slate-500">View application activity logs</p>
+                                    <h3 className="font-semibold text-slate-900">Catatan System</h3>
+                                    <p className="text-sm text-slate-500">Lihat Aktivitas Aplikasi</p>
                                 </div>
                             </div>
                         </Card>
@@ -166,7 +166,7 @@ const AdminDashboard = () => {
             </div>
             {/* Data Export */}
             <div>
-                <h2 className="text-lg font-bold text-slate-900 mb-4">Data Export</h2>
+                <h2 className="text-lg font-bold text-slate-900 mb-4">Export Data</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Card
                         className="hover:border-primary-200 transition-colors cursor-pointer group"
@@ -177,8 +177,8 @@ const AdminDashboard = () => {
                                 <FileSpreadsheet size={20} />
                             </div>
                             <div>
-                                <h3 className="font-semibold text-slate-900">Export All Students</h3>
-                                <p className="text-sm text-slate-500">Download student data as Excel</p>
+                                <h3 className="font-semibold text-slate-900">Export Semua Data Siswa</h3>
+                                <p className="text-sm text-slate-500">Download data Siswa Di Excel</p>
                             </div>
                         </div>
                     </Card>
@@ -192,8 +192,8 @@ const AdminDashboard = () => {
                                 <FileSpreadsheet size={20} />
                             </div>
                             <div>
-                                <h3 className="font-semibold text-slate-900">Export Activity Logs</h3>
-                                <p className="text-sm text-slate-500">Download full activity history</p>
+                                <h3 className="font-semibold text-slate-900">Export Aktivitas</h3>
+                                <p className="text-sm text-slate-500">Download semua aktivitas</p>
                             </div>
                         </div>
                     </Card>
