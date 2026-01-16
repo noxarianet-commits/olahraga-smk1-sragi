@@ -119,13 +119,20 @@ const Sidebar = () => {
                             )}
                         </NavLink>
                     ))}
-                    <button
-                        onClick={logout}
-                        className="flex flex-col items-center justify-center p-3 text-slate-400"
+                    <NavLink
+                        to="/profile"
+                        className={({ isActive }) => cn(
+                            "flex flex-col items-center justify-center p-3 transition-colors",
+                            isActive ? "text-primary-600" : "text-slate-400"
+                        )}
                     >
-                        <LogOut size={24} />
-                        <span className="text-[10px] font-medium mt-1">Keluar</span>
-                    </button>
+                        {({ isActive }) => (
+                            <>
+                                <User size={24} strokeWidth={isActive ? 2.5 : 2} />
+                                <span className="text-[10px] font-medium mt-1">Profile</span>
+                            </>
+                        )}
+                    </NavLink>
                 </nav>
             </div>
         </>

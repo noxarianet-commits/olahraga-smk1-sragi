@@ -14,6 +14,7 @@ import ClassManagement from './pages/ClassManagement';
 import SystemLogs from './pages/SystemLogs';
 
 import ClassStudentList from './pages/ClassStudentList';
+import ProfilePage from './pages/ProfilePage';
 
 // Placeholder components for routes not yet implemented
 const Placeholder = ({ title }) => <div className="p-4"><h2 className="text-2xl font-bold">{title}</h2><p className="text-slate-500">Coming Soon...</p></div>;
@@ -46,6 +47,7 @@ function App() {
             <Route path="activities/new" element={<SubmitActivity />} />
             <Route path="announcements" element={<Announcements />} />
             <Route path="verification" element={<VerificationList />} />
+            <Route path="profile" element={<ProfilePage />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/login" replace />} />
