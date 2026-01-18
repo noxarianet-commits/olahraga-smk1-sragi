@@ -4,6 +4,7 @@ import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
+import LoadingOverlay from '../components/ui/LoadingOverlay';
 import { Users, GraduationCap, School, Activity, Shield, FileSpreadsheet } from 'lucide-react';
 import { downloadFile } from '../utils/downloadHelper';
 
@@ -33,24 +34,36 @@ const AdminDashboard = () => {
         activities: 0
     });
     const [loading, setLoading] = useState(true);
+    const [exportLoading, setExportLoading] = useState(false);
+    const [exportMessage, setExportMessage] = useState('');
 
     const handleExportStudents = async () => {
+        setExportLoading(true);
+        setExportMessage('Mengekspor data siswa...');
         try {
             const response = await api.get('/export/students', { responseType: 'blob' });
             downloadFile(response, 'students-data.xlsx');
         } catch (error) {
             console.error('Failed to export students', error);
             alert('Gagal mengekspor data siswa.');
+        } finally {
+            setExportLoading(false);
+            setExportMessage('');
         }
     };
 
     const handleExportActivities = async () => {
+        setExportLoading(true);
+        setExportMessage('Mengekspor laporan aktivitas...');
         try {
             const response = await api.get('/export/activities', { responseType: 'blob' });
             downloadFile(response, 'activity-logs.xlsx');
         } catch (error) {
             console.error('Failed to export activities', error);
             alert('Gagal mengekspor log aktivitas.');
+        } finally {
+            setExportLoading(false);
+            setExportMessage('');
         }
     };
 
@@ -80,126 +93,129 @@ const AdminDashboard = () => {
     if (loading) return <div className="p-8 text-center text-slate-500">Loading admin dashboard...</div>;
 
     return (
-        <div className="space-y-8">
-            {/* Header */}
-            <div>
-                <h1 className="text-2xl font-bold text-slate-900">Admin Dashboard 🛡️</h1>
-                <p className="text-slate-500">Management System.</p>
-            </div>
+        <>
+            <LoadingOverlay isVisible={exportLoading} message={exportMessage} />
+            <div className="space-y-8">
+                {/* Header */}
+                <div>
+                    <h1 className="text-2xl font-bold text-slate-900">Admin Dashboard 🛡️</h1>
+                    <p className="text-slate-500">Management System.</p>
+                </div>
 
-            {/* Stats Overview */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <StatCard
-                    title="Total Students"
-                    value={stats.students}
-                    icon={GraduationCap}
-                    color="bg-blue-500"
-                    link="/admin/users"
-                />
-                <StatCard
-                    title="Total Teachers"
-                    value={stats.teachers}
-                    icon={Users}
-                    color="bg-purple-500"
-                    link="/admin/users"
-                />
-                <StatCard
-                    title="Active Classes"
-                    value={stats.classes}
-                    icon={School}
-                    color="bg-emerald-500"
-                    link="/admin/classes"
-                />
-                <StatCard
-                    title="Total Activities"
-                    value={stats.activities}
-                    icon={Activity}
-                    color="bg-amber-500"
-                    link="/admin/activities"
-                />
-            </div>
+                {/* Stats Overview */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <StatCard
+                        title="Total Students"
+                        value={stats.students}
+                        icon={GraduationCap}
+                        color="bg-blue-500"
+                        link="/admin/users"
+                    />
+                    <StatCard
+                        title="Total Teachers"
+                        value={stats.teachers}
+                        icon={Users}
+                        color="bg-purple-500"
+                        link="/admin/users"
+                    />
+                    <StatCard
+                        title="Active Classes"
+                        value={stats.classes}
+                        icon={School}
+                        color="bg-emerald-500"
+                        link="/admin/classes"
+                    />
+                    <StatCard
+                        title="Total Activities"
+                        value={stats.activities}
+                        icon={Activity}
+                        color="bg-amber-500"
+                        link="/admin/activities"
+                    />
+                </div>
 
-            {/* Quick Actions (Mock) */}
-            <div>
-                <h2 className="text-lg font-bold text-slate-900 mb-4">Management Cepat</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <Link to="/admin/users">
-                        <Card className="hover:border-primary-200 transition-colors cursor-pointer group h-full">
+                {/* Quick Actions (Mock) */}
+                <div>
+                    <h2 className="text-lg font-bold text-slate-900 mb-4">Management Cepat</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <Link to="/admin/users">
+                            <Card className="hover:border-primary-200 transition-colors cursor-pointer group h-full">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                        <Users size={20} />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-semibold text-slate-900">Management Users</h3>
+                                        <p className="text-sm text-slate-500">Tambahkan, edit, Atau Hapus users</p>
+                                    </div>
+                                </div>
+                            </Card>
+                        </Link>
+                        <Link to="/admin/classes">
+                            <Card className="hover:border-primary-200 transition-colors cursor-pointer group h-full">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                                        <School size={20} />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-semibold text-slate-900">Management Kelas</h3>
+                                        <p className="text-sm text-slate-500">Tambahkan Kelas & Guru</p>
+                                    </div>
+                                </div>
+                            </Card>
+                        </Link>
+                        <Link to="/admin/logs">
+                            <Card className="hover:border-primary-200 transition-colors cursor-pointer group h-full">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center group-hover:bg-amber-600 group-hover:text-white transition-colors">
+                                        <Shield size={20} />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-semibold text-slate-900">Catatan System</h3>
+                                        <p className="text-sm text-slate-500">Lihat Aktivitas Aplikasi</p>
+                                    </div>
+                                </div>
+                            </Card>
+                        </Link>
+                    </div>
+                </div>
+                {/* Data Export */}
+                <div>
+                    <h2 className="text-lg font-bold text-slate-900 mb-4">Export Data</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <Card
+                            className="hover:border-primary-200 transition-colors cursor-pointer group"
+                            onClick={handleExportStudents}
+                        >
+                            <div className="flex items-center gap-4">
+                                <div className="w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center group-hover:bg-green-600 group-hover:text-white transition-colors">
+                                    <FileSpreadsheet size={20} />
+                                </div>
+                                <div>
+                                    <h3 className="font-semibold text-slate-900">Export Semua Data Siswa</h3>
+                                    <p className="text-sm text-slate-500">Download data Siswa Di Excel</p>
+                                </div>
+                            </div>
+                        </Card>
+
+                        <Card
+                            className="hover:border-primary-200 transition-colors cursor-pointer group"
+                            onClick={handleExportActivities}
+                        >
                             <div className="flex items-center gap-4">
                                 <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                                    <Users size={20} />
+                                    <FileSpreadsheet size={20} />
                                 </div>
                                 <div>
-                                    <h3 className="font-semibold text-slate-900">Management Users</h3>
-                                    <p className="text-sm text-slate-500">Tambahkan, edit, Atau Hapus users</p>
+                                    <h3 className="font-semibold text-slate-900">Export Aktivitas</h3>
+                                    <p className="text-sm text-slate-500">Download semua aktivitas</p>
                                 </div>
                             </div>
                         </Card>
-                    </Link>
-                    <Link to="/admin/classes">
-                        <Card className="hover:border-primary-200 transition-colors cursor-pointer group h-full">
-                            <div className="flex items-center gap-4">
-                                <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                                    <School size={20} />
-                                </div>
-                                <div>
-                                    <h3 className="font-semibold text-slate-900">Management Kelas</h3>
-                                    <p className="text-sm text-slate-500">Tambahkan Kelas & Guru</p>
-                                </div>
-                            </div>
-                        </Card>
-                    </Link>
-                    <Link to="/admin/logs">
-                        <Card className="hover:border-primary-200 transition-colors cursor-pointer group h-full">
-                            <div className="flex items-center gap-4">
-                                <div className="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center group-hover:bg-amber-600 group-hover:text-white transition-colors">
-                                    <Shield size={20} />
-                                </div>
-                                <div>
-                                    <h3 className="font-semibold text-slate-900">Catatan System</h3>
-                                    <p className="text-sm text-slate-500">Lihat Aktivitas Aplikasi</p>
-                                </div>
-                            </div>
-                        </Card>
-                    </Link>
+                    </div>
                 </div>
             </div>
-            {/* Data Export */}
-            <div>
-                <h2 className="text-lg font-bold text-slate-900 mb-4">Export Data</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Card
-                        className="hover:border-primary-200 transition-colors cursor-pointer group"
-                        onClick={handleExportStudents}
-                    >
-                        <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center group-hover:bg-green-600 group-hover:text-white transition-colors">
-                                <FileSpreadsheet size={20} />
-                            </div>
-                            <div>
-                                <h3 className="font-semibold text-slate-900">Export Semua Data Siswa</h3>
-                                <p className="text-sm text-slate-500">Download data Siswa Di Excel</p>
-                            </div>
-                        </div>
-                    </Card>
-
-                    <Card
-                        className="hover:border-primary-200 transition-colors cursor-pointer group"
-                        onClick={handleExportActivities}
-                    >
-                        <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                                <FileSpreadsheet size={20} />
-                            </div>
-                            <div>
-                                <h3 className="font-semibold text-slate-900">Export Aktivitas</h3>
-                                <p className="text-sm text-slate-500">Download semua aktivitas</p>
-                            </div>
-                        </div>
-                    </Card>
-                </div>
-            </div>
-        </div>
+        </>
     );
 };
 
