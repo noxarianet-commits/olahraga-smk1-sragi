@@ -3,6 +3,7 @@ import { Outlet, Navigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import { useAuth } from '../../context/AuthContext';
 import { Loader2 } from 'lucide-react';
+import FloatingHelpButton from '../ui/FloatingHelpButton';
 
 const DashboardLayout = () => {
     const { isAuthenticated, isLoading } = useAuth();
@@ -30,6 +31,7 @@ const DashboardLayout = () => {
                     <Outlet />
                 </div>
             </main>
+            <FloatingHelpButton />
         </div>
     );
 };

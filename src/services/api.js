@@ -20,7 +20,9 @@ const api = axios.create({
 const USE_MOCK = false;
 
 api.interceptors.request.use(async (config) => {
-    console.log(`[API Request] ${config.method.toUpperCase()} ${config.url}`, config.data);
+    if (import.meta.env.VITE_ENABLE_API_LOGS === 'true') {
+        console.log(`[API Request] ${config.method.toUpperCase()} ${config.url}`, config.data);
+    }
 
     if (USE_MOCK) {
         // ... existing mock logic ...
@@ -37,7 +39,9 @@ api.interceptors.request.use(async (config) => {
 
 api.interceptors.response.use(
     (response) => {
-        console.log(`[API Response] ${response.status} ${response.config.url}`, response.data);
+        if (import.meta.env.VITE_ENABLE_API_LOGS === 'true') {
+            console.log(`[API Response] ${response.status} ${response.config.url}`, response.data);
+        }
         return response;
     },
     async (error) => {
@@ -47,7 +51,9 @@ api.interceptors.response.use(
             // (Keeping the existing fallback logic, but adding logging above)
 
             const { url, method, data } = error.config;
-            console.log(`[Mock API] ${method.toUpperCase()} ${url}`, data ? JSON.parse(data) : '');
+            if (import.meta.env.VITE_ENABLE_API_LOGS === 'true') {
+                console.log(`[Mock API] ${method.toUpperCase()} ${url}`, data ? JSON.parse(data) : '');
+            }
 
             // Auth
             if (url.includes('/auth/login')) {
